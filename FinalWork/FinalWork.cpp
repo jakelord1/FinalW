@@ -5,7 +5,7 @@
 #define SI Size
 #define NSI NSize
 #define E std::endl
-// https ://unetway.com/tutorial/c-data-i-vrema
+#define CL system("cls");
 
 struct Time {
     int min;
@@ -15,7 +15,7 @@ struct Time {
     int year;
 };
 const size_t Size = 250;
-const size_t NSize = 250;
+const size_t NSize = 50;
 struct Task {
     char name[NSI];
     char descript[SI];
@@ -30,18 +30,18 @@ void TaskShow(Task task) {
     S CO "\nDate: " << task.time.day << '\\' << task.time.month << '\\' << task.time.year << "\t" << task.time.hour << ':' << task.time.min;
 }
 Task TaskEdit(Task task) {
+    CL
     S CO "Task Editing" << E;
-
     S CO "Enter name of task(до 50 символов): ";
     S cin.getline(task.name, NSI);
-
+    _sleep(2000);
     S CO "Enter task description(до 250 символов): ";
     S cin.getline(task.descript, SI);
 
     S CO "Enter priority of task(1 - 4): ";
     S cin >> task.prior;
 
-    S CO "Enter date of task:";
+    S CO "Enter date of task:" << E;
     S CO  "Year: ";
     S cin >> task.time.year;
     S CO  "Month: ";
@@ -61,7 +61,7 @@ Task TaskAdder(Task task) {
     TaskShow(task);
     S CO E << "Add task to list?\n1 - Yes\t0 - No\n";
     S cin >> choise;
-    system("cls");
+    CL
     if (choise) {
         S CO "Task added";
         return task;
@@ -71,32 +71,62 @@ Task TaskAdder(Task task) {
     }
 }
 Task* TaskDeleter(Task tasks[], int choosed) {
-    for (size_t i = 0; i < SI; i++)
+    for (size_t i = 0; i < NSI; i++)
     {
         if (i >= choosed) {
             tasks[i] = tasks[i + 1];
         }
+        
     }
+    S CO "Task deleted";
     return tasks;
+}
+void TasksShower(Task task, int i) {
+    S CO i << "\t" << task.prior << '\t' << task.time.day << '\\' << task.time.month << '\\' << task.time.year << "\t" << task.time.hour << ':' << task.time.min << '\t' << task.name << E;
 }
 
 Task TaskEditor(Task task) {
     bool choise = 1;
     Task z = task;
     task = TaskEdit(task);
+    CL
     TaskShow(task);
     S CO E << "Add changes to list?\n1 - Yes\t0 - No\n";
     S cin >> choise;
-    system("cls");
+    CL
     if (choise) {
-        S CO "Task edited";
+        S CO "Task edited" << E;
         return task;
     }
     else {
         return z;
     }
 }
-int TaskSearch(Task tasks[]) {
+Task* TaskSelected(Task tasks[], int i) {
+    CL
+    TaskShow(tasks[i]);
+    int choose;
+    S CO "What action:\n1 - Edit task\t2 - Delete task\t0 - End work" << E;
+    S cin >> choose;
+    switch (choose)
+    {
+    case 1: {
+        tasks[i] = TaskEditor(tasks[i]);
+        return tasks;
+        break;
+    }
+    case 2: {
+        TaskDeleter(tasks, i);
+        return tasks;
+        break;
+    }
+    default:
+        return tasks;
+        break;
+    }
+}
+void TaskSearch(Task tasks[]) {
+    S CO "Search by:\n1 - name\t2 - description\t3 - priority\t4 - date" << E;
     int choose;
     S cin >> choose;
     switch (choose)
@@ -150,7 +180,7 @@ int TaskSearch(Task tasks[]) {
     }
     case 4: {
         int date[5];
-        S CO "Enter date:";
+        S CO "Enter date:" << E;
         S CO  "Year: ";
         S cin >> date[0];
         S CO  "Month: ";
@@ -169,51 +199,52 @@ int TaskSearch(Task tasks[]) {
         }
         S cin >> choose;
         TaskSelected(tasks, choose);
-
     }
     default:
         break;
     }
 }
-void TasksShower(Task task, int i) {
-    S CO i << "\t" << task.prior << '\t' << task.time.day << '\\' << task.time.month << '\\' << task.time.year << "  " << task.time.hour << ':' << task.time.min << '\t' << task.name << E;
+
+void quickSortR(Task* tasks, int N) {
+    long i = 0, j = N - 1;
+    Task temp, p;
+    p = tasks[N >> 1];
+    do {
+        while (tasks[i].prior < p.prior) i++;
+        while (tasks[j].prior > p.prior) j--;
+
+        if (i <= j) {
+            temp = tasks[i]; tasks[i] = tasks[j]; tasks[i] = temp;
+            i++; j--;
+        }
+    } while (i <= j);
+
+    if (j > 0) quickSortR(tasks, j);
+    if (N > i) quickSortR(tasks + i, N - i);
+
+
 }
 
-Task* TaskSelected(Task tasks[], int i) {
-    TaskShow(tasks[i]);
-    int choose;
-    S cin >> choose;
-    switch (choose)
-    {
-    case 1: {
-        TaskEditor(tasks[i]);
-        break;
-    }
-    case 2: {
-        TaskDeleter(tasks, i);
-        break;
-    }
-    default:
-        return tasks;
-        break;
-    }
-}
+
 void TaskSort() {
 
 }
 void TaskMenu(Task tasks[], Time current) {
-    S CO E;
+    S CO "Enter action:\n1 - Choose task\t2 - Show tasks by time\t3 - Sort tasks\t0 - Exit programm" << E;
     int choise;
     S cin >> choise;
     switch (choise)
     {
     case 1: {
+        S CO "Choose task: ";
         S cin >> choise;
         TaskSelected(tasks, choise);
         break;
     }
     case 2: {
+        S CO "Choose time:\n1 - For day\t2 - For week\t3 - For month\n";
         S cin >> choise;
+        CL
         switch (choise)
         {
         case 1: {
@@ -251,19 +282,19 @@ void TaskMenu(Task tasks[], Time current) {
         }
     }
     case 3: {
-
+        TaskSearch(tasks);
     }
     default:
+        exit(0);
         break;
     }
 }
 int main()
 {
     setlocale(LC_ALL, "");
-    Task* tasks = new Task[5];
-    TaskAdder(tasks[0]);
+    Task* tasks = new Task[NSI];
     Time current;
-    S CO "Enter curent date:";
+    S CO "Enter curent date:" << E;
     S CO  "Year: ";
     S cin >> current.year;
     S CO  "Month: ";
@@ -277,7 +308,22 @@ int main()
 
     for (size_t i = 0; i < NSI; i++)
     {
-        TasksShower(tasks[i], i);
+        if (tasks[i].prior < 0) {
+            tasks[i].prior = 0;
+            tasks[i].time.year = 0;
+            tasks[i].time.month = 0;
+            tasks[i].time.day = 0;
+            tasks[i].time.hour = 0;
+            tasks[i].time.min = 0;
+        }
     }
+    while (1) {
+        for (size_t i = 0; i < 5; i++)
+        {
+            TasksShower(tasks[i], i);
+        }
+        TaskMenu(tasks, current);
+    }
+    
 }
 
