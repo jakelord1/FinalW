@@ -93,7 +93,6 @@ Task* TaskDeleter(Task tasks[], int choosed) {
         if (i >= choosed) {
             tasks[i] = tasks[i + 1];
         }
-        
     }
     CL
     S CO "Task deleted" << E;
@@ -137,6 +136,7 @@ Task* TaskSelected(Task tasks[], int i) {
     CL
     TaskShow(tasks[i]);
     int choose;
+    
     S CO "What action:\n1 - Edit task\t2 - Delete task\t0 - End work" << E;
     S cin >> choose;
     switch (choose)
@@ -192,9 +192,11 @@ void TaskSearch(Task tasks[]) {
     switch (choose)
     {
     case 1: {
-        SH
+        
         char search[5], comp[5];
         S cin >> search;
+        CL
+        SH
         for (size_t i = 0; i < SS; i++)
         {
             for (size_t j = 0; j < 5; j++)
@@ -213,6 +215,7 @@ void TaskSearch(Task tasks[]) {
     case 2: {
         char search[5], comp[5];
         S cin >> search;
+        CL
         SH
         for (size_t i = 0; i < SS; i++)
         {
@@ -233,6 +236,7 @@ void TaskSearch(Task tasks[]) {
         int cmp;
         S CO E << "Enter proirity: ";
         S cin >> cmp;
+        CL
         SH
         for (size_t i = 0; i < SS; i++)
         {
@@ -258,6 +262,7 @@ void TaskSearch(Task tasks[]) {
         S cin >> date[3];
         S CO  "Minutes: ";
         S cin >> date[4];
+        CL
         SH
         for (size_t i = 0; i < SS; i++)
         {
@@ -295,31 +300,10 @@ void TaskMenu(Task tasks[], Time current) {
         S CO "Choose time:\n1 - For day\t2 - For week\t3 - For month\n";
         S cin >> choise;
         CL
-        switch (choise)
-        {
-        case 1: {
-            SH
-            for (size_t i = 0; i < SS; i++)
-            {
-                if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && current.day == tasks[i].time.day) {
-                    
-                    TasksShower(tasks[i], i);
-                }
-            }
-            sel = 1;
-            S CO "Choose action\n1 - Choose task\t2 - Sort list by priority" << E;
-            S cin >> choise;
             switch (choise)
             {
             case 1: {
-                S CO "Choose task: ";
-                S cin >> choise;
-                TaskSelected(tasks, choise);
-                break;
-            }
-            case 2: {
-                quickSortP(tasks, SS);
-                if (sel == 1) {
+                SH
                     for (size_t i = 0; i < SS; i++)
                     {
                         if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && current.day == tasks[i].time.day) {
@@ -327,17 +311,75 @@ void TaskMenu(Task tasks[], Time current) {
                             TasksShower(tasks[i], i);
                         }
                     }
+                sel = 1;
+                S CO "Choose action\n1 - Choose task\t2 - Sort list by priority" << E;
+                S cin >> choise;
+                switch (choise)
+                {
+                case 1: {
+                    S CO "Choose task: ";
+                    S cin >> choise;
+                    TaskSelected(tasks, choise);
+                    break;
                 }
-                else if (sel == 2) {
+                case 2: {
+                    quickSortP(tasks, SS);
+                    if (sel == 1) {
+                        for (size_t i = 0; i < SS; i++)
+                        {
+                            if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && current.day == tasks[i].time.day) {
+
+                                TasksShower(tasks[i], i);
+                            }
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+                break;
+            }
+            case 2: {
+                SH
                     for (size_t i = 0; i < SS; i++)
                     {
-                        if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && tasks[i].time.day - current.day <= 7) {
+                        if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && current.day == tasks[i].time.day) {
 
                             TasksShower(tasks[i], i);
                         }
                     }
+                sel = 2;
+                S CO "Choose action\n1 - Choose task\t2 - Sort list by priority" << E;
+                S cin >> choise;
+                switch (choise)
+                {
+                case 1: {
+                    S CO "Choose task: ";
+                    S cin >> choise;
+                    TaskSelected(tasks, choise);
+                    break;
                 }
-                else if (sel == 3) {
+                case 2: {
+                    quickSortP(tasks, SS);
+                    if (sel == 2) {
+                        for (size_t i = 0; i < SS; i++)
+                        {
+                            if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && tasks[i].time.day - current.day <= 7) {
+
+                                TasksShower(tasks[i], i);
+                            }
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+                break;
+            }
+            case 3: {
+                SH
                     for (size_t i = 0; i < SS; i++)
                     {
                         if (current.year == tasks[i].time.year && current.month == tasks[i].time.month) {
@@ -345,53 +387,47 @@ void TaskMenu(Task tasks[], Time current) {
                             TasksShower(tasks[i], i);
                         }
                     }
+                sel = 3;
+                S CO "Choose action\n1 - Choose task\t2 - Sort list by priority" << E;
+                S cin >> choise;
+                switch (choise)
+                {
+                case 1: {
+                    S CO "Choose task: ";
+                    S cin >> choise;
+                    TaskSelected(tasks, choise);
+                    break;
+                }
+                case 2: {
+                    quickSortP(tasks, SS);
+                    if (sel == 2) {
+                        for (size_t i = 0; i < SS; i++)
+                        {
+                            if (current.year == tasks[i].time.year && current.month == tasks[i].time.month) {
+
+                                TasksShower(tasks[i], i);
+                            }
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
                 }
                 break;
             }
-            default:
-                break;
             }
             break;
-        }
-        case 2: {
-            SH
-            for (size_t i = 0; i < SS; i++)
-            {
-                if (current.year == tasks[i].time.year && current.month == tasks[i].time.month && tasks[i].time.day - current.day <= 7) {
-                    
-                    TasksShower(tasks[i], i);
-                }
-            }
-            sel = 2;
-            TaskMenu(tasks, current);
-            break;
-        }
-        case 3: {
-            SH
-            for (size_t i = 0; i < SS; i++)
-            {
-                if (current.year == tasks[i].time.year && current.month == tasks[i].time.month) {
-                    
-                    TasksShower(tasks[i], i);
-                }
-            }
-            sel = 3;
-            TaskMenu(tasks, current);
-            break;
-        }
-        default:
-            break;
-        }
     }
     case 3: {
         TaskSearch(tasks);
+        break;
     }
     default:
         exit(0);
         break;
     }
 }
-
 
 
 
@@ -426,7 +462,7 @@ int main()
     }
     while (1) {
         S CO "id" << '\t' << "Prior" << '\t' << "Date" << '\t' << "Time" << '\t' << "Name" << E;
-        for (size_t i = 0; i < 5; i++)
+        for (size_t i = 0; i < SS; i++)
         {
             TasksShower(tasks[i], i);
         }
