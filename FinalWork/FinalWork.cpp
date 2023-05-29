@@ -24,6 +24,17 @@ struct Task {
     Time time;
 };
 
+Task TaskAdder(Task task);
+Task* TaskDeleter(Task* tasks, int choosed);
+Task TaskEdit(Task task);
+Task TaskEditor(Task task);
+void TaskReseter(Task* tasks);
+void TaskSearch(Task* tasks);
+Task* TaskSelected(Task* tasks, int i);
+void TaskShow(Task task);
+void TasksShower(Task task, int i);
+void TaskMenu(Task* tasks, Time current);
+void quickSortP(Task* tasks, int N);
 
 
 void TaskShow(Task task) {
@@ -64,7 +75,19 @@ Task TaskEdit(Task task) {
     return task;
 }
 
-
+void TaskReseter(Task* tasks) {
+    for (size_t i = 0; i < SS; i++)
+    {
+        if (tasks[i].prior < 0) {
+            tasks[i].prior = 0;
+            tasks[i].time.year = 0;
+            tasks[i].time.month = 0;
+            tasks[i].time.day = 0;
+            tasks[i].time.hour = 0;
+            tasks[i].time.min = 0;
+        }
+    }
+}
 
 
 Task TaskAdder(Task task) {
@@ -87,13 +110,14 @@ Task TaskAdder(Task task) {
 
 
 
-Task* TaskDeleter(Task tasks[], int choosed) {
+Task* TaskDeleter(Task* tasks, int choosed) {
     for (size_t i = 0; i < SS; i++)
     {
         if (i >= choosed) {
             tasks[i] = tasks[i + 1];
         }
     }
+    TaskReseter(tasks);
     CL
     S CO "Task deleted" << E;
     return tasks;
@@ -132,7 +156,7 @@ Task TaskEditor(Task task) {
 
 
 
-Task* TaskSelected(Task tasks[], int i) {
+Task* TaskSelected(Task* tasks, int i) {
     CL
     TaskShow(tasks[i]);
     int choose;
@@ -185,7 +209,7 @@ void quickSortP(Task* tasks, int N) {
 
 
 
-void TaskSearch(Task tasks[]) {
+void TaskSearch(Task* tasks) {
     S CO "Search by:\n1 - name\t2 - description\t3 - priority\t4 - date" << E;
     int choose;
     S cin >> choose;
@@ -284,7 +308,7 @@ void TaskSearch(Task tasks[]) {
 
 
 
-void TaskMenu(Task tasks[], Time current) {
+void TaskMenu(Task* tasks, Time current) {
     S CO "Enter action:\n1 - Choose task\t2 - Show tasks by time\t3 - Search tasks\t0 - Exit programm" << E;
     int choise, sel;
     S cin >> choise;
@@ -424,14 +448,11 @@ void TaskMenu(Task tasks[], Time current) {
         break;
     }
     default:
+        delete[] tasks;
         exit(0);
         break;
     }
 }
-
-
-
-
 int main()
 {
     setlocale(LC_ALL, "");
@@ -449,17 +470,7 @@ int main()
     S CO  "Minutes: ";
     S cin >> current.min;
 
-    for (size_t i = 0; i < SS; i++)
-    {
-        if (tasks[i].prior < 0) {
-            tasks[i].prior = 0;
-            tasks[i].time.year = 0;
-            tasks[i].time.month = 0;
-            tasks[i].time.day = 0;
-            tasks[i].time.hour = 0;
-            tasks[i].time.min = 0;
-        }
-    }
+    TaskReseter(tasks);
     while (1) {
         S CO "id" << '\t' << "Prior" << '\t' << "Date" << '\t' << "Time" << '\t' << "Name" << E;
         for (size_t i = 0; i < SS; i++)
@@ -468,6 +479,5 @@ int main()
         }
         TaskMenu(tasks, current);
     }
-    
 }
 
